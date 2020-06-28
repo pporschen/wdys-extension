@@ -9,23 +9,27 @@ chrome.storage.sync.remove(['settings']);
 
 const gotSettings = (data, sender, sendResponse) => {
     const body = document.querySelector('body');
-    let id = 0;
-    console.log(data);
+    console.log(1, data);
 
 
     if (data.role === 'manager') {
+        const nodes = document.getElementsByTagName('*');
+        let count = 0;
+
+        for (let node of nodes) {
+            node.dataset.id = count;
+            count++;
+        }
+
         const snapshot = body.innerHTML;
-        id++;
-        console.log(data.url)
-        console.log(snapshot.length)
-        console.log(snapshot)
-        fetch('http://localhost:3000/saveBody', {
+
+        fetch(`https://wdys.herokuapp.com/projects/${data.projectId}/snapshot`, {
             method: 'POST',
             mode: 'cors',
             headers: {
                 'Content-Type': 'application/json; charset=UTF-8'
             },
-            body: JSON.stringify({ id: id, innerHTML: snapshot, snapshotName: data.snapshotName, snapshotDescription: data.snapshotDescription })
+            body: JSON.stringify({ page_url: data.url, innerHTML: snapshot, pagename: data.snapshotName, description: data.snapshotDescription, base_lang: "ger" })
         })
             .then(res => console.log(res))
             .catch(err => console.log(err))
@@ -78,10 +82,6 @@ const gotSettings = (data, sender, sendResponse) => {
 
     }
 }
-
-
-
-
 
 
 chrome.runtime.onMessage.addListener(gotSettings);
