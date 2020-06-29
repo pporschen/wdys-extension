@@ -37,12 +37,13 @@ const gotSettings = (data, sender, sendResponse) => {
 
 
     if (data.role === 'translator') {
-        (async () => {
-            const response = await fetch(`http://localhost:3000/saveBody/11`)
-            const data = await response.json()
-            console.log(data)
-            console.log(data[0].innerHTML)
-            body.innerHTML = data[0].innerHTML;
+        console.log(2, data);
+        const fetcher = async (data) => {
+            const response = await fetch(`https://wdys.herokuapp.com/translators/extension/${data.userId}/${data.pageId}`)
+            const result = await response.json()
+            console.log(result)
+            console.log(result[0].innerHTML)
+            body.innerHTML = result[0].innerHTML;
 
 
 
@@ -78,7 +79,8 @@ const gotSettings = (data, sender, sendResponse) => {
 
             }
             );
-        })()
+        };
+        fetcher(data);
 
     }
 }
