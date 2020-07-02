@@ -109,7 +109,6 @@ class TranslatorView extends HTMLElement {
                 <form id="form">
                     <select name="projects" id="projects" >
                     </select>
-
                     <select name="pages" id="pages">
                     </select>
                     <input type="submit" value="Open Page" id="open">
