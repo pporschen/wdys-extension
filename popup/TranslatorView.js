@@ -2,16 +2,15 @@ class TranslatorView extends HTMLElement {
 
     connectedCallback() {
         this.render();
+        const role = 'translator';
         const loadButton = document.getElementById('load');
         const openButton = document.querySelector('#open');
         let project = document.getElementById('projects');
-        let snapshotName = document.getElementById('snapshot-name');
-        let snapshotDescription = document.getElementById('snapshot-description');
         const selection = document.querySelector('#projects');
         const pages = document.querySelector('#pages');
-        const role = 'translator';
         const userId = localStorage.getItem('userid');
         let allPages;
+
 
 
         fetch(`https://wdys.herokuapp.com/translators/extension/${userId}/initial`)
@@ -46,6 +45,7 @@ class TranslatorView extends HTMLElement {
             const send = (tabs) => {
                 console.log('send')
                 message.url = tabs[0].url;
+                console.log(tabs[0])
                 chrome.tabs.sendMessage(tabs[0].id, message);
             }
 
@@ -81,11 +81,22 @@ class TranslatorView extends HTMLElement {
             });
         };
 
+        chrome.storage.onChanged.addListener((changes) => {
+            console.log(changes['isWdysBasepage'])
+            if (changes['isWdysBasepage'].newValue) loadButton.style.display = "block";
+        });
+
+        chrome.storage.local.get('isWdysBasepage', item => {
+            console.log(item)
+            if (item['isWdysBasepage']) loadButton.style.display = "block";
+        })
+
         loadButton.onclick = (e) => {
             e.preventDefault();
-            const data = { role, projectId: project.value, snapshotName: snapshotName.value, snapshotDescription: snapshotDescription.value }
-            console.log(data)
+            const currentPage = allPages.filter(page => pages.value === page._id)[0];
+            const data = { 'tprequest': 'true', role, userId, pageId: currentPage._id }
             sendToContent(data);
+            chrome.tabs.create({ url: currentPage.page_url })
         };
     }
 
@@ -99,7 +110,7 @@ class TranslatorView extends HTMLElement {
         <select name="pages" id="pages">
         </select>
         <input type="submit" value="Open Page" id="open">
-        <input type="submit" value="Start Translation" id="load">
+        <input type="submit" value="Start Translation" id="load" style="display: none;">
 
     </form>
     <br>

@@ -11,3 +11,8 @@ chrome.cookies.get({ url: 'https://developer.mozilla.org', name: 'messages' },
     });
 
 
+chrome.tabs.onUpdated.addListener((tabId, options, tab) => {
+    console.log(localStorage)
+    console.log(tabId)
+    //localStorage.removeItem('isWdysBasepage')
+});
