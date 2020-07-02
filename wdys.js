@@ -9,23 +9,27 @@ chrome.storage.sync.remove(['settings']);
 
 const gotSettings = (data, sender, sendResponse) => {
     const body = document.querySelector('body');
-    let id = 0;
-    console.log(data);
+    console.log(1, data);
 
 
     if (data.role === 'manager') {
+        const nodes = document.getElementsByTagName('*');
+        let count = 0;
+
+        for (let node of nodes) {
+            node.dataset.id = count;
+            count++;
+        }
+
         const snapshot = body.innerHTML;
-        id++;
-        console.log(data.url)
-        console.log(snapshot.length)
-        console.log(snapshot)
-        fetch('http://localhost:3000/saveBody', {
+
+        fetch(`https://wdys.herokuapp.com/projects/${data.projectId}/snapshot`, {
             method: 'POST',
             mode: 'cors',
             headers: {
                 'Content-Type': 'application/json; charset=UTF-8'
             },
-            body: JSON.stringify({ id: id, innerHTML: snapshot, snapshotName: data.snapshotName, snapshotDescription: data.snapshotDescription })
+            body: JSON.stringify({ page_url: data.url, innerHTML: snapshot, pagename: data.snapshotName, description: data.snapshotDescription, base_lang: "ger" })
         })
             .then(res => console.log(res))
             .catch(err => console.log(err))
@@ -33,12 +37,13 @@ const gotSettings = (data, sender, sendResponse) => {
 
 
     if (data.role === 'translator') {
-        (async () => {
-            const response = await fetch(`http://localhost:3000/saveBody/11`)
-            const data = await response.json()
-            console.log(data)
-            console.log(data[0].innerHTML)
-            body.innerHTML = data[0].innerHTML;
+        console.log(2, data);
+        const fetcher = async (data) => {
+            const response = await fetch(`https://wdys.herokuapp.com/translators/extension/${data.userId}/${data.pageId}`)
+            const result = await response.json()
+            console.log(result)
+            console.log(result[0].innerHTML)
+            body.innerHTML = result[0].innerHTML;
 
 
 
@@ -74,14 +79,11 @@ const gotSettings = (data, sender, sendResponse) => {
 
             }
             );
-        })()
+        };
+        fetcher(data);
 
     }
 }
-
-
-
-
 
 
 chrome.runtime.onMessage.addListener(gotSettings);

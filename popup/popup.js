@@ -1,9 +1,9 @@
-const snapshotButton = document.getElementById('snapshot');
-let project = document.getElementById('projects');
-let snapshotName = document.getElementById('snapshot-name');
-let snapshotDescription = document.getElementById('snapshot-description');
-let role = document.getElementById('role');
+import './ManagerView.js';
+import './TranslatorView.js'
 
+
+const currentRole = localStorage.getItem('role');
+const main = document.querySelector('main');
 
 
 // chrome.storage.sync.get(['settings', 'sessionState'], (data) => {
@@ -15,22 +15,36 @@ let role = document.getElementById('role');
 //     let sessionState = data.sessionState || false;
 // });
 
-const sendToContent = (message) => {
-    const send = (tabs) => {
-        message.url = tabs[0].url;
-        chrome.tabs.sendMessage(tabs[0].id, message)
-    }
-
-    chrome.tabs.query({ active: true, "currentWindow": true },
-        send);
-};
+if (!currentRole) {
 
 
 
-snapshotButton.onclick = (e) => {
-    e.preventDefault();
-    const data = { role: role.value, project: project.value, snapshotName: snapshotName.value, snapshotDescription: snapshotDescription.value }
 
-    sendToContent(data);
+
 }
+
+if (currentRole === 'manager') {
+    const managerView = document.createElement('manager-view');
+    main.appendChild(managerView)
+
+
+
+
+}
+
+if (currentRole === 'translator') {
+    const translatorView = document.createElement('translator-view');
+    main.appendChild(translatorView)
+
+
+    // }
+
+
+}
+
+
+
+
+
+
 
