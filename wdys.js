@@ -1,17 +1,10 @@
-chrome.runtime.sendMessage({
-    reloaded: true,
-}
-);
-
-chrome.storage.sync.remove(['settings']);
-
+const body = document.querySelector('body');
+chrome.storage.local.remove('isWdysBasepage');
 
 
 const gotSettings = (data, sender, sendResponse) => {
-    const body = document.querySelector('body');
+
     console.log(1, data);
-
-
     if (data.role === 'manager') {
         const nodes = document.getElementsByTagName('*');
         let count = 0;
@@ -35,55 +28,102 @@ const gotSettings = (data, sender, sendResponse) => {
             .catch(err => console.log(err))
     }
 
-
     if (data.role === 'translator') {
-        console.log(2, data);
-        const fetcher = async (data) => {
+
+        (async () => {
             const response = await fetch(`https://wdys.herokuapp.com/translators/extension/${data.userId}/${data.pageId}`)
             const result = await response.json()
-            console.log(result)
-            console.log(result[0].innerHTML)
-            body.innerHTML = result[0].innerHTML;
+            body.innerHTML = result.basepage.innerHTML;
+            body.innerHTML = '<div id="base-id" style="position: fixed; bottom:0; background-color: white"> BASE </div>' + body.innerHTML
 
+            chrome.storage.local.set({ 'isWdysBasepage': true });
+        })();
 
+        window.addEventListener('scroll', () => {
+            localStorage.setItem('y', window.pageYOffset.toString());
+            localStorage.setItem('x', window.pageXOffset.toString());
+        })
 
-            const allNodes = Array.from(document.getElementsByTagName('*'));
-            let currentSelection;
-
-            for (let node of allNodes) {
-                if (node.nodeName === "BUTTON")
-                    node.disabled = true;
-                if (node.nodeName === "BUTTON")
-                    node.disabled = false;
-                if (node.nodeName === "A")
-                    node.style.pointerEvents = 'none';
-                if (node.placeholder)
-                    node.value = node.placeholder
-            }
-
-            body.contentEditable = true;
-            //body.addEventListener('contextmenu', event => event.preventDefault());
-
-            body.addEventListener('click', () => {
-                let x = event.clientX;
-                let y = event.clientY;
-
-                lastSelection = currentSelection;
-                currentSelection = document.elementFromPoint(x, y);
-                // should add last border style, not 'none'
-                if (lastSelection)
-                    lastSelection.style.border = 'none';
-                currentSelection.style.border = '1px dotted black';
-                console.log(currentSelection)
-
-
-            }
-            );
-        };
-        fetcher(data);
-
+        window.addEventListener('storage', () => window.scrollTo(Number(localStorage.getItem('x')), Number(localStorage.getItem('y'))))
     }
-}
 
+    if (data.tprequest) {
+        console.log('here')
+        localStorage.setItem('tprequest', true);
+        localStorage.setItem('userId', data.userId);
+        localStorage.setItem('pageId', data.pageId);
+    }
+};
+
+if (localStorage.getItem('tprequest') === 'true') {
+    const userId = localStorage.getItem('userId');
+    const pageId = localStorage.getItem('pageId');
+    const saver = (pseudo) => {
+        fetch(`https://wdys.herokuapp.com/translators/extension/sendpage`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8'
+            },
+            body: JSON.stringify({ translator_id: userId, page_id: pageId, innerHTML: pseudo.innerHTML })
+        })
+            .then(res => console.log(res))
+            .catch(err => console.log(err))
+    };
+
+    (async () => {
+        const response = await fetch(`https://wdys.herokuapp.com/translators/extension/${userId}/${pageId}`)
+        const result = await response.json()
+        const allNodes = Array.from(document.getElementsByTagName('*'));
+        let currentSelection;
+
+        body.innerHTML = '<div id="pseudo-body">' + result.translationpage.innerHTML + '<div>';
+        body.innerHTML = '<div id="translation-id" style="position: fixed; bottom:0; background-color: white;z-index:99"> TRANSLATION </div>' + body.innerHTML
+
+        for (let node of allNodes) {
+            if (node.nodeName === "BUTTON")
+                node.disabled = true;
+            if (node.nodeName === "BUTTON")
+                node.disabled = false;
+            if (node.nodeName === "A")
+                node.style.pointerEvents = 'none';
+            if (node.placeholder)
+                node.value = node.placeholder
+        }
+
+        body.innerHTML = '<button id="save-button" style="position: fixed; bottom:0; right: 0"> SAVE </button>' + body.innerHTML
+        const pseudo = document.querySelector('#pseudo-body');
+        const saveButton = document.querySelector('#save-button')
+        pseudo.contentEditable = true;
+
+        pseudo.addEventListener('click', () => {
+            let x = event.clientX;
+            let y = event.clientY;
+
+            lastSelection = currentSelection;
+            currentSelection = document.elementFromPoint(x, y);
+            // should add last border style, not 'none'
+            if (lastSelection)
+                lastSelection.style.border = 'none';
+            currentSelection.style.border = '1px dotted black';
+
+            saver(pseudo);
+        }
+        );
+
+        saveButton.addEventListener('click', () => saver(pseudo));
+
+        localStorage.removeItem('tprequest');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('pageId');
+
+        window.addEventListener('scroll', () => {
+            localStorage.setItem('y', window.pageYOffset.toString());
+            localStorage.setItem('x', window.pageXOffset.toString());
+        })
+
+        window.addEventListener('storage', () => window.scrollTo(Number(localStorage.getItem('x')), Number(localStorage.getItem('y'))))
+
+    })();
+}
 
 chrome.runtime.onMessage.addListener(gotSettings);
