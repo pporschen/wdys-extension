@@ -103,18 +103,20 @@ class TranslatorView extends HTMLElement {
 
     render() {
         this.innerHTML =
-            `<form id="form">
-        <select name="projects" id="projects" >
-        </select>
+            `<div class="contain-tm">
+                <h1 class='title'><span>{</span> wdys <span>}</span></h1>
+                <h2 class='sub-title'>Add the page</h2>
+                <form id="form">
+                    <select name="projects" id="projects" >
+                    </select>
 
-        <select name="pages" id="pages">
-        </select>
-        <input type="submit" value="Open Page" id="open">
-        <input type="submit" value="Start Translation" id="load" style="display: none;">
+                    <select name="pages" id="pages">
+                    </select>
+                    <input type="submit" value="Open Page" id="open">
+                    <input type="submit" value="Start Translation" id="load" style="display: none;">
 
-    </form>
-    <br>
-    <br></br>`}
+                </form>
+            </div>`}
 }
 
 customElements.define('translator-view', TranslatorView)

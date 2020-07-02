@@ -42,17 +42,25 @@ class ManagerView extends HTMLElement {
 
     render() {
         this.innerHTML =
-            `<form>
-                <select name="projects" id="projects">
-                </select>
-                <br>
-                <label for="snaphot-name">Name:</label>
-                <input type="text" id="snapshot-name" name="snapshot-name"><br><br>
-                <label for="snapshot-description">Description:</label>
-                <textarea cols="35" rows="7" name="snapshot-description" id="snapshot-description"></textarea> <br><br>
-                <input type="submit" value="Snapshot" id="snapshot" disabled>
-            </form>
-            <br>`}
+            `<div class="contain-tm">
+                <h1 class='title'><span>{</span> wdys <span>}</span></h1>
+                <h2 class='sub-title'>Add the page</h2>
+                <form>
+                    <label for="projects">Project Name *</label>
+                    <select name="projects" id="projects">
+                    </select>
+                    
+                    <label for="snaphot-name">Page Name *</label>
+                    <input type="text" id="snapshot-name" name="snapshot-name" placeholder="Give your page a name">
+                    
+                    <label for="snapshot-description">Description:</label>
+                    <textarea  name="snapshot-description" id="snapshot-description"></textarea> <br><br>
+                    
+                    <button type="submit" class="submit" id="snapshot" disabled><span class="material-icons">camera_alt</span> Take a snapshot</button>
+                    
+                </form>
+            </div>`
+        }
 }
 
 customElements.define('manager-view', ManagerView)
