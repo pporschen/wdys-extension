@@ -73,19 +73,22 @@ if (localStorage.getItem('tprequest') === 'true') {
     (async () => {
         const response = await fetch(`https://wdys.herokuapp.com/translators/extension/${userId}/${pageId}`)
         const result = await response.json()
-        const allNodes = Array.from(document.getElementsByTagName('*'));
+
         let currentSelection;
 
         body.innerHTML = '<div id="pseudo-body">' + result.translationpage.innerHTML + '<div>';
         body.innerHTML = '<div id="translation-id" style="position: fixed; bottom:0; background-color: white;z-index:99"> TRANSLATION </div>' + body.innerHTML
 
+        const allNodes = Array.from(document.getElementsByTagName('*'));
+
         for (let node of allNodes) {
             if (node.nodeName === "BUTTON")
                 node.disabled = true;
-            if (node.nodeName === "BUTTON")
-                node.disabled = false;
-            if (node.nodeName === "A")
+
+            if (node.nodeName === "A") {
                 node.style.pointerEvents = 'none';
+                node.disabled = true;
+            }
             if (node.placeholder)
                 node.value = node.placeholder
         }
