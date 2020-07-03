@@ -77,7 +77,7 @@ if (localStorage.getItem('tprequest') === 'true') {
         let currentSelection;
 
         body.innerHTML = '<div id="pseudo-body">' + result.translationpage.innerHTML + '<div>';
-        body.innerHTML = '<div id="translation-id" style="position: fixed; bottom:0; background-color: white;z-index:99"> TRANSLATION </div>' + body.innerHTML
+        body.innerHTML = '<div id="translation-id" class="" style="position: fixed; bottom:0; z-index:99"> TRANSLATION </div>' + body.innerHTML
 
         for (let node of allNodes) {
             if (node.nodeName === "BUTTON")
