@@ -13,7 +13,6 @@ class ManagerView extends HTMLElement {
             .then(data => {
                 console.log(data.projects)
                 const projects = data.projects;
-                snapshotButton.disabled = !projects.length;
                 projects.length
                     ? projects.map(project => selection.innerHTML += `<option value="${project._id}">${project.projectname}</option>`)
                     : selection.innerHTML += `<option value="No Projects">No Projects found</option>`
@@ -35,9 +34,16 @@ class ManagerView extends HTMLElement {
 
         snapshotButton.onclick = (e) => {
             e.preventDefault();
+            console.log("hey")
             const data = { role: localStorage.getItem('role'), projectId: project.value, snapshotName: snapshotName.value, snapshotDescription: snapshotDescription.value }
             sendToContent(data);
         };
+
+        snapshotName.oninput = (e) => {
+            if(e.target.value.length > 5) {
+                snapshotButton.disabled = false
+                } else snapshotButton.disabled = true
+            };
     }
 
     render() {
@@ -48,11 +54,12 @@ class ManagerView extends HTMLElement {
                 <form>
                     <label for="projects">Project Name *</label>
                     <select name="projects" id="projects">
+                        <option value="" selected disabled>Select a project</option>
                     </select>
                     <label for="snaphot-name">Page Name *</label>
-                    <input type="text" id="snapshot-name" name="snapshot-name" placeholder="Give your page a name">
+                    <input type="text" id="snapshot-name" name="snapshot-name" placeholder="Give your page a name" required>
                     <label for="snapshot-description">Description:</label>
-                    <textarea  name="snapshot-description" id="snapshot-description"></textarea> <br><br>
+                    <textarea  name="snapshot-description" id="snapshot-description"></textarea>
                     <button type="submit" class="submit" id="snapshot" disabled><span class="material-icons">camera_alt</span> Take a snapshot</button>
                 </form>
             </div>`

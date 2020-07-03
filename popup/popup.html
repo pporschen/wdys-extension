@@ -71,7 +71,7 @@
             height: 3em;
             margin-top:1em;
         }
-        button.submit, input[type=submit] {
+        button {
             border: 0;
             color: #fff;
             text-transform: uppercase;
@@ -85,11 +85,26 @@
             flex-direction: row;
             align-items: center;
             padding: 0.5em 0;
+            /* display: block; */
+        }
+        button:disabled {
+            background: #999999;
+        }
+        button.translator {
+            display: block;
         }
         span.material-icons{
             margin: 0 0.5em 0 1em;
         }
-        /* <input type="submit" value="Take Snapshot" id="snapshot" disabled> */
+        /*  , input[type=submit] 
+        
+            Manager's input:
+            <input type="submit" value="Take Snapshot" id="snapshot" disabled> 
+
+            Translator's inputs:
+            <input type="submit" value="Open Page" id="open">
+            <input type="submit" value="Start Translation" id="load" style="display: none;">
+        */
     </style>
 </head>
 

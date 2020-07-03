@@ -19,12 +19,15 @@ class TranslatorView extends HTMLElement {
                 const projects = data.projects;
                 loadButton.disabled = !projects.length;
 
-                projects.length
-                    ? projects.map(project => {
-                        if (project._id === localStorage.getItem('project')) selection.innerHTML += `<option selected="selected" value="${project._id}">${project.projectname}</option>`
+                
+                    if(projects.length) {projects.map(project => {
+                        console.log(project._id === localStorage.getItem('project'))
+                        if (project._id === localStorage.getItem('project')) selection.innerHTML += `<option value="${project._id}" selected>${project.projectname}</option>`
                         else selection.innerHTML += `<option value="${project._id}">${project.projectname}</option>`
-                    })
-                    : selection.innerHTML += `<option value="No Projects">No Projects found</option>`;
+                    });
+                    if (!localStorage.getItem('project')) selection.innerHTML += `<option value="" selected disabled>Select a project</option>`
+                }
+                    else selection.innerHTML += `<option value="No Projects">No Projects found</option>`;
 
                 allPages = data.translationpages;
                 const projectPages = allPages.filter(page => page.base_project_id === project.value);
@@ -107,12 +110,18 @@ class TranslatorView extends HTMLElement {
                 <h1 class='title'><span>{</span> wdys <span>}</span></h1>
                 <h2 class='sub-title'>Add the page</h2>
                 <form id="form">
+                    <label>Project Name</label>
                     <select name="projects" id="projects" >
                     </select>
+
+                    <label>Select the Page</label>
                     <select name="pages" id="pages">
                     </select>
-                    <input type="submit" value="Open Page" id="open">
-                    <input type="submit" value="Start Translation" id="load" style="display: none;">
+                    
+                    
+                    <button type="submit" id="open" class="translator"> Open page </button>
+
+                    <button type="submit" id="load" class="translator" style="display: none"> Start Translation </button>
 
                 </form>
             </div>`}
