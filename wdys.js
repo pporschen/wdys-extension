@@ -1,19 +1,22 @@
+//import style from './style'
 const body = document.querySelector('body');
 chrome.storage.local.remove('isWdysBasepage');
 
 
 const gotSettings = (data, sender, sendResponse) => {
-
+    console.log('ho')
     console.log(1, data);
     if (data.role === 'manager') {
         const nodes = document.getElementsByTagName('*');
         let count = 0;
+        
 
         for (let node of nodes) {
             node.dataset.id = count;
             count++;
         }
-
+        console.log(style)
+        
         const snapshot = body.innerHTML;
 
         fetch(`https://wdys.herokuapp.com/projects/${data.projectId}/snapshot`, {
@@ -26,6 +29,10 @@ const gotSettings = (data, sender, sendResponse) => {
         })
             .then(res => console.log(res))
             .catch(err => console.log(err))
+
+      
+    
+            
     }
 
     if (data.role === 'translator') {
@@ -34,7 +41,7 @@ const gotSettings = (data, sender, sendResponse) => {
             const response = await fetch(`https://wdys.herokuapp.com/translators/extension/${data.userId}/${data.pageId}`)
             const result = await response.json()
             body.innerHTML = result.basepage.innerHTML;
-            body.innerHTML = '<div id="base-id" style="position: fixed; bottom:0; background-color: white"> BASE </div>' + body.innerHTML
+            body.innerHTML = '<div id="base-id" style="position: fixed; bottom:0; background-color: white width: 100vw; height: 3em; z-index:10;"> BASE </div>' + body.innerHTML
 
             chrome.storage.local.set({ 'isWdysBasepage': true });
         })();
@@ -124,6 +131,7 @@ if (localStorage.getItem('tprequest') === 'true') {
         window.addEventListener('storage', () => window.scrollTo(Number(localStorage.getItem('x')), Number(localStorage.getItem('y'))))
 
     })();
+    
 }
 
 chrome.runtime.onMessage.addListener(gotSettings);

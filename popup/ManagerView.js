@@ -24,6 +24,7 @@ class ManagerView extends HTMLElement {
 
         const sendToContent = (message) => {
             const send = (tabs) => {
+                console.log("hey")
                 message.url = tabs[0].url;
                 chrome.tabs.sendMessage(tabs[0].id, message)
             }
@@ -34,16 +35,21 @@ class ManagerView extends HTMLElement {
 
         snapshotButton.onclick = (e) => {
             e.preventDefault();
-            console.log("hey")
+            
             const data = { role: localStorage.getItem('role'), projectId: project.value, snapshotName: snapshotName.value, snapshotDescription: snapshotDescription.value }
             sendToContent(data);
         };
+        
 
         snapshotName.oninput = (e) => {
             if(e.target.value.length > 5) {
                 snapshotButton.disabled = false
-                } else snapshotButton.disabled = true
+                } else {
+                    snapshotButton.disabled = true;
+               
+                }
             };
+
     }
 
     render() {
@@ -57,7 +63,7 @@ class ManagerView extends HTMLElement {
                         <option value="" selected disabled>Select a project</option>
                     </select>
                     <label for="snaphot-name">Page Name *</label>
-                    <input type="text" id="snapshot-name" name="snapshot-name" placeholder="Give your page a name" required>
+                    <input type="text" id="snapshot-name" name="snapshot-name" placeholder="Give your page a name (min. 5 characters)" required>
                     <label for="snapshot-description">Description:</label>
                     <textarea  name="snapshot-description" id="snapshot-description"></textarea>
                     <button type="submit" class="submit" id="snapshot" disabled><span class="material-icons">camera_alt</span> Take a snapshot</button>
