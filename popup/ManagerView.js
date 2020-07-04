@@ -11,7 +11,7 @@ class ManagerView extends HTMLElement {
         fetch(`https://wdys.herokuapp.com/projects/extensions/initial/${localStorage.getItem('userid')}`)
             .then(data => data.json())
             .then(data => {
-                console.log(data.projects)
+                // console.log(data.projects)
                 const projects = data.projects;
                 projects.length
                     ? projects.map(project => selection.innerHTML += `<option value="${project._id}">${project.projectname}</option>`)
@@ -25,6 +25,7 @@ class ManagerView extends HTMLElement {
         const sendToContent = (message) => {
             const send = (tabs) => {
                 console.log("hey")
+                console.log({projectValue: project.value })
                 message.url = tabs[0].url;
                 chrome.tabs.sendMessage(tabs[0].id, message)
             }
@@ -38,17 +39,38 @@ class ManagerView extends HTMLElement {
             
             const data = { role: localStorage.getItem('role'), projectId: project.value, snapshotName: snapshotName.value, snapshotDescription: snapshotDescription.value }
             sendToContent(data);
+            flasher();
         };
+
         
+        const flasher = () => {
+            const over = document.getElementById("overlay");
+            const message = document.getElementById("message");
+            over.style.display = "block";
+            message.style.display = "block"
+            setTimeout(() => {
+              over.style.display = "none";
+              message.style.display = "none";
+            }, 7000);
+          };
+
+        project.onchange = (e) => {
+            if(e.target === "" || snapshotName.value === "") {
+                snapshotButton.disabled = true
+                } else  {
+                    snapshotButton.disabled = false;
+                }
+        };
 
         snapshotName.oninput = (e) => {
-            if(e.target.value.length > 5) {
-                snapshotButton.disabled = false
-                } else {
-                    snapshotButton.disabled = true;
-               
+            if(e.target.value.length < 5 || project.value === "") {
+                snapshotButton.disabled = true
+                } else  {
+                    snapshotButton.disabled = false;
                 }
-            };
+        };
+
+            
 
     }
 
@@ -65,9 +87,19 @@ class ManagerView extends HTMLElement {
                     <label for="snaphot-name">Page Name *</label>
                     <input type="text" id="snapshot-name" name="snapshot-name" placeholder="Give your page a name (min. 5 characters)" required>
                     <label for="snapshot-description">Description:</label>
-                    <textarea  name="snapshot-description" id="snapshot-description"></textarea>
+                    <textarea name="snapshot-description" id="snapshot-description"></textarea>
                     <button type="submit" class="submit" id="snapshot" disabled><span class="material-icons">camera_alt</span> Take a snapshot</button>
                 </form>
+                <div id='overlay'>
+                </div>
+                <div id='message'>
+                    <div class="center">
+                        <div class="success">
+                            <span class="material-icons flash-icon">camera_alt</span>
+                            <h3>Your project snapshot was successful</h3>
+                        </div>
+                    </div>
+                </div>
             </div>`
         }
 }

@@ -1,4 +1,3 @@
-//import style from './style'
 const body = document.querySelector('body');
 chrome.storage.local.remove('isWdysBasepage');
 
@@ -15,7 +14,6 @@ const gotSettings = (data, sender, sendResponse) => {
             node.dataset.id = count;
             count++;
         }
-        console.log(style)
         
         const snapshot = body.innerHTML;
 
@@ -29,9 +27,6 @@ const gotSettings = (data, sender, sendResponse) => {
         })
             .then(res => console.log(res))
             .catch(err => console.log(err))
-
-      
-    
             
     }
 
