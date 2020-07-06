@@ -17,7 +17,8 @@ class TranslatorView extends HTMLElement {
             .then(data => data.json())
             .then(data => {
                 const projects = data.projects;
-                loadButton.disabled = !projects.length;
+                loadButton.disabled  = !projects.length 
+                //|| projects.value === 'No pages found';
 
                 
                     if(projects.length) {projects.map(project => {
@@ -34,7 +35,7 @@ class TranslatorView extends HTMLElement {
 
                 projectPages.length
                     ? projectPages.map(page => {
-                        if (page._id === localStorage.getItem('page')) pages.innerHTML += `<option selected="selected" value="${page._id}">${page.pagename}</option>`
+                        if (page._id === localStorage.getItem('page')) pages.innerHTML += `<option selected="selected" value="${page._id}">${page.pagename}</option>`;
                         else pages.innerHTML += `<option value="${page._id}">${page.pagename}</option>`
                     })
                     : pages.innerHTML += `<option value="No Pages">No pages found</option>`;
@@ -61,7 +62,7 @@ class TranslatorView extends HTMLElement {
             pages.innerHTML = '';
             projectPages.length
                 ? projectPages.map(page => pages.innerHTML += `<option value="${page._id}">${page.pagename}</option>`)
-                : pages.innerHTML += `<option value="No Pages">No pages found</option>`;
+                : pages.innerHTML += `<option value="No pages found">No pages found</option>`;
             localStorage.setItem('project', project.value);
         });
 
@@ -86,12 +87,12 @@ class TranslatorView extends HTMLElement {
 
         chrome.storage.onChanged.addListener((changes) => {
             console.log(changes['isWdysBasepage'])
-            if (changes['isWdysBasepage'].newValue) loadButton.style.display = "block";
+            if (changes['isWdysBasepage'].newValue ) loadButton.style.display = "block";
         });
 
         chrome.storage.local.get('isWdysBasepage', item => {
             console.log(item)
-            if (item['isWdysBasepage']) loadButton.style.display = "block";
+            if (item['isWdysBasepage']) loadButton.style.display = "block"; 
         })
 
         loadButton.onclick = (e) => {
@@ -101,6 +102,23 @@ class TranslatorView extends HTMLElement {
             sendToContent(data);
             chrome.tabs.create({ url: currentPage.page_url })
         };
+
+        
+        
+
+        pages.onchange = (e) => {
+            if(e.target.value.length === 0) {
+                console.log('button disabled')
+                openButton.disabled = true
+            } else openButton.disabled = false
+        }
+
+        // document.unonload = () => {
+        //     console.log(pages.length)
+        //     if(pages.length < 1) {
+        //         openButton.disabled = true
+        //     } else openButton.disabled = false
+        // }
     }
 
 
@@ -110,6 +128,7 @@ class TranslatorView extends HTMLElement {
                 <h1 class='title'><span>{</span> wdys <span>}</span></h1>
                 <h2 class='sub-title'>Add the page</h2>
                 <form id="form">
+
                     <label>Project Name</label>
                     <select name="projects" id="projects" >
                     </select>
@@ -119,9 +138,9 @@ class TranslatorView extends HTMLElement {
                     </select>
                     
                     
-                    <button type="submit" id="open" class="translator"> Open page </button>
+                    <button type="submit" id="open" class="translator" disabled > Open page </button>
 
-                    <button type="submit" id="load" class="translator" style="display: none"> Start Translation </button>
+                    <button type="submit" id="load" class="translator" style="display: none"> Load Translation </button>
 
                 </form>
             </div>`}
