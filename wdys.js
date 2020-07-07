@@ -27,7 +27,7 @@ const gotSettings = (data, sender, sendResponse) => {
         })
             .then(res => (res.json()))
             .then(res => console.log(res))
-            .catch(err => console.log(err))
+            .catch(console.log(err)
     }
 
     if (data.role === 'translator') {

@@ -2,30 +2,33 @@ class ManagerView extends HTMLElement {
 
     connectedCallback() {
         this.render();
+        const readStorage = new Promise(resolve => chrome.storage.local.get('user_id', resolve));
+        const role = 'manager';
         const snapshotButton = document.getElementById('snapshot');
         let project = document.getElementById('projects');
         let snapshotName = document.getElementById('snapshot-name');
         let snapshotDescription = document.getElementById('snapshot-description');
         const selection = document.querySelector('#projects');
 
-        fetch(`https://wdys.herokuapp.com/projects/extensions/initial/${localStorage.getItem('userid')}`)
-            .then(data => data.json())
-            .then(data => {
-                // console.log(data.projects)
-                const projects = data.projects;
-                projects.length
-                    ? projects.map(project => selection.innerHTML += `<option value="${project._id}">${project.projectname}</option>`)
-                    : selection.innerHTML += `<option value="No Projects">No Projects found</option>`
-            })
-            .catch(err => {
-                selection.innerHTML += `<option value="No Projects">No Projects found</option>`
-                console.log(err)
-            });
+        readStorage.then(res =>
+            fetch(`https://wdys.herokuapp.com/projects/extensions/initial/${res.user_id}`)
+                .then(data => data.json())
+                .then(data => {
+                    // console.log(data.projects)
+                    const projects = data.projects;
+                    projects.length
+                        ? projects.map(project => selection.innerHTML += `<option value="${project._id}">${project.projectname}</option>`)
+                        : selection.innerHTML += `<option value="No Projects">No Projects found</option>`
+                })
+                .catch(err => {
+                    selection.innerHTML += `<option value="No Projects">No Projects found</option>`
+                    console.log(err)
+                }));
 
         const sendToContent = (message) => {
             const send = (tabs) => {
                 console.log("hey")
-                console.log({projectValue: project.value })
+                console.log({ projectValue: project.value })
                 message.url = tabs[0].url;
                 chrome.tabs.sendMessage(tabs[0].id, message)
             }
@@ -36,41 +39,41 @@ class ManagerView extends HTMLElement {
 
         snapshotButton.onclick = (e) => {
             e.preventDefault();
-            
-            const data = { role: localStorage.getItem('role'), projectId: project.value, snapshotName: snapshotName.value, snapshotDescription: snapshotDescription.value }
+
+            const data = { role, projectId: project.value, snapshotName: snapshotName.value, snapshotDescription: snapshotDescription.value }
             sendToContent(data);
             flasher();
         };
 
-        
+
         const flasher = () => {
             const over = document.getElementById("overlay");
             const message = document.getElementById("message");
             over.style.display = "block";
             message.style.display = "block"
             setTimeout(() => {
-              over.style.display = "none";
-              message.style.display = "none";
+                over.style.display = "none";
+                message.style.display = "none";
             }, 7000);
-          };
+        };
 
         project.onchange = (e) => {
-            if(e.target === "" || snapshotName.value === "") {
+            if (e.target === "" || snapshotName.value === "") {
                 snapshotButton.disabled = true
-                } else  {
-                    snapshotButton.disabled = false;
-                }
+            } else {
+                snapshotButton.disabled = false;
+            }
         };
 
         snapshotName.oninput = (e) => {
-            if(e.target.value.length < 5 || project.value === "") {
+            if (e.target.value.length < 5 || project.value === "") {
                 snapshotButton.disabled = true
-                } else  {
-                    snapshotButton.disabled = false;
-                }
+            } else {
+                snapshotButton.disabled = false;
+            }
         };
 
-            
+
 
     }
 
@@ -101,7 +104,7 @@ class ManagerView extends HTMLElement {
                     </div>
                 </div>
             </div>`
-        }
+    }
 }
 
 customElements.define('manager-view', ManagerView)

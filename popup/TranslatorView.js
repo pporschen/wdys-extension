@@ -8,41 +8,41 @@ class TranslatorView extends HTMLElement {
         let project = document.getElementById('projects');
         const selection = document.querySelector('#projects');
         const pages = document.querySelector('#pages');
-        const userId = localStorage.getItem('userid');
+        const readStorage = new Promise(resolve => chrome.storage.local.get('user_id', resolve));
         let allPages;
 
 
+        readStorage.then(res =>
+            fetch(`https://wdys.herokuapp.com/translators/extension/${res.user_id}/initial`)
+                .then(data => data.json())
+                .then(data => {
+                    const projects = data.projects;
+                    loadButton.disabled = !projects.length
 
-        fetch(`https://wdys.herokuapp.com/translators/extension/${userId}/initial`)
-            .then(data => data.json())
-            .then(data => {
-                const projects = data.projects;
-                loadButton.disabled = !projects.length
+                    if (projects.length) {
+                        projects.map(project => {
+                            console.log(project._id === localStorage.getItem('project'))
+                            if (project._id === localStorage.getItem('project')) selection.innerHTML += `<option value="${project._id}" selected>${project.projectname}</option>`
+                            else selection.innerHTML += `<option value="${project._id}">${project.projectname}</option>`
+                        });
+                        if (!localStorage.getItem('project')) selection.innerHTML += `<option value="" selected disabled>Select a project</option>`
+                    }
+                    else selection.innerHTML += `<option value="No Projects">No Projects found</option>`;
 
-                if (projects.length) {
-                    projects.map(project => {
-                        console.log(project._id === localStorage.getItem('project'))
-                        if (project._id === localStorage.getItem('project')) selection.innerHTML += `<option value="${project._id}" selected>${project.projectname}</option>`
-                        else selection.innerHTML += `<option value="${project._id}">${project.projectname}</option>`
-                    });
-                    if (!localStorage.getItem('project')) selection.innerHTML += `<option value="" selected disabled>Select a project</option>`
-                }
-                else selection.innerHTML += `<option value="No Projects">No Projects found</option>`;
+                    allPages = data.translationpages;
+                    const projectPages = allPages.filter(page => page.base_project_id === project.value);
 
-                allPages = data.translationpages;
-                const projectPages = allPages.filter(page => page.base_project_id === project.value);
-
-                projectPages.length
-                    ? projectPages.map(page => {
-                        if (page._id === localStorage.getItem('page')) pages.innerHTML += `<option selected="selected" value="${page._id}">${page.pagename}</option>`;
-                        else pages.innerHTML += `<option value="${page._id}">${page.pagename}</option>`
-                    })
-                    : pages.innerHTML += `<option value="No Pages">No pages found</option>`;
-            })
-            .catch(err => {
-                selection.innerHTML += `<option value="No Projects">No Projects found</option>`;
-                pages.innerHTML += `<option value="No Pages">No pages found</option>`;
-            });
+                    projectPages.length
+                        ? projectPages.map(page => {
+                            if (page._id === localStorage.getItem('page')) pages.innerHTML += `<option selected="selected" value="${page._id}">${page.pagename}</option>`;
+                            else pages.innerHTML += `<option value="${page._id}">${page.pagename}</option>`
+                        })
+                        : pages.innerHTML += `<option value="No Pages">No pages found</option>`;
+                })
+                .catch(err => {
+                    selection.innerHTML += `<option value="No Projects">No Projects found</option>`;
+                    pages.innerHTML += `<option value="No Pages">No pages found</option>`;
+                }));
 
         const sendToContent = (message) => {
             const send = (tabs) => {
