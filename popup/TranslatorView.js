@@ -17,18 +17,17 @@ class TranslatorView extends HTMLElement {
             .then(data => data.json())
             .then(data => {
                 const projects = data.projects;
-                loadButton.disabled  = !projects.length 
-                //|| projects.value === 'No pages found';
+                loadButton.disabled = !projects.length
 
-                
-                    if(projects.length) {projects.map(project => {
+                if (projects.length) {
+                    projects.map(project => {
                         console.log(project._id === localStorage.getItem('project'))
                         if (project._id === localStorage.getItem('project')) selection.innerHTML += `<option value="${project._id}" selected>${project.projectname}</option>`
                         else selection.innerHTML += `<option value="${project._id}">${project.projectname}</option>`
                     });
                     if (!localStorage.getItem('project')) selection.innerHTML += `<option value="" selected disabled>Select a project</option>`
                 }
-                    else selection.innerHTML += `<option value="No Projects">No Projects found</option>`;
+                else selection.innerHTML += `<option value="No Projects">No Projects found</option>`;
 
                 allPages = data.translationpages;
                 const projectPages = allPages.filter(page => page.base_project_id === project.value);
@@ -86,13 +85,12 @@ class TranslatorView extends HTMLElement {
         };
 
         chrome.storage.onChanged.addListener((changes) => {
-            console.log(changes['isWdysBasepage'])
-            if (changes['isWdysBasepage'].newValue ) loadButton.style.display = "block";
+            if (changes['isWdysBasepage'].newValue) loadButton.style.display = "block";
         });
 
         chrome.storage.local.get('isWdysBasepage', item => {
             console.log(item)
-            if (item['isWdysBasepage']) loadButton.style.display = "block"; 
+            if (item['isWdysBasepage']) loadButton.style.display = "block";
         })
 
         loadButton.onclick = (e) => {
@@ -103,23 +101,17 @@ class TranslatorView extends HTMLElement {
             chrome.tabs.create({ url: currentPage.page_url })
         };
 
-        
-        
-
         pages.onchange = (e) => {
-            if(e.target.value.length === 0) {
+            if (e.target.value.length === 0) {
                 console.log('button disabled')
                 openButton.disabled = true
             } else openButton.disabled = false
-        }
+        };
 
-        // document.unonload = () => {
-        //     console.log(pages.length)
-        //     if(pages.length < 1) {
-        //         openButton.disabled = true
-        //     } else openButton.disabled = false
-        // }
+        if (localStorage.getItem('project') && localStorage.getItem('page')) openButton.disabled = false;
     }
+
+
 
 
     render() {

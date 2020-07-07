@@ -1,6 +1,6 @@
 
 
-chrome.cookies.get({ url: 'https://developer.mozilla.org', name: 'messages' },
+chrome.cookies.get({ url: 'https://wdys.netlify.app/', name: 'role' },
     function (cookie) {
         if (cookie) {
             console.log(cookie.value);
@@ -10,9 +10,4 @@ chrome.cookies.get({ url: 'https://developer.mozilla.org', name: 'messages' },
         }
     });
 
-
-chrome.tabs.onUpdated.addListener((tabId, options, tab) => {
-    console.log(localStorage)
-    console.log(tabId)
-    //localStorage.removeItem('isWdysBasepage')
-});
+chrome.cookies.getAllCookieStores((store) => console.log(store))
