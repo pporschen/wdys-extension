@@ -1,47 +1,25 @@
 import './ManagerView.js';
 import './TranslatorView.js'
-
-
-const currentRole = localStorage.getItem('role');
 const main = document.querySelector('main');
 
+const readStorage = new Promise(resolve => chrome.storage.local.get('role', resolve));
 
-// chrome.storage.sync.get(['settings', 'sessionState'], (data) => {
-//     const loadSettings = data ? data.settings : false;
-//     linkOption.checked = loadSettings.linkOption;
-//     buttonOption.checked = loadSettings.buttonOption;
-//     placeholderOption.checked = loadSettings.placeholderOption;
-//     sessionButton.textContent = sessionState ? "End session" : "Start session";
-//     let sessionState = data.sessionState || false;
-// });
-
-if (!currentRole) {
-
-
-
-
-
+readStorage.then(res => {
+    const currentRole = res.role;
+    console.log(currentRole)
+    if (!currentRole) {
+    }
+    if (currentRole === '0') {
+        console.log('hey')
+        const managerView = document.createElement('manager-view');
+        main.appendChild(managerView)
+    }
+    if (currentRole === '1') {
+        const translatorView = document.createElement('translator-view');
+        main.appendChild(translatorView)
+    }
 }
-
-if (currentRole === 'manager') {
-    const managerView = document.createElement('manager-view');
-    main.appendChild(managerView)
-
-
-
-
-}
-
-if (currentRole === 'translator') {
-    const translatorView = document.createElement('translator-view');
-    main.appendChild(translatorView)
-
-
-    // }
-
-
-}
-
+)
 
 
 
