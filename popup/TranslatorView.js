@@ -9,15 +9,18 @@ class TranslatorView extends HTMLElement {
         const selection = document.querySelector('#projects');
         const pages = document.querySelector('#pages');
         const readStorage = new Promise(resolve => chrome.storage.local.get('user_id', resolve));
+        let userId;
         let allPages;
 
 
-        readStorage.then(res =>
-            fetch(`https://wdys.herokuapp.com/translators/extension/${res.user_id}/initial`)
+        readStorage.then(res => {
+            userId = res.user_id;
+            fetch(`https://wdys.herokuapp.com/translators/extension/${userId}/initial`)
                 .then(data => data.json())
                 .then(data => {
                     const projects = data.projects;
-                    loadButton.disabled = !projects.length
+                    console.log(projects)
+                    openButton.disabled = !projects.length
 
                     if (projects.length) {
                         projects.map(project => {
@@ -42,7 +45,8 @@ class TranslatorView extends HTMLElement {
                 .catch(err => {
                     selection.innerHTML += `<option value="No Projects">No Projects found</option>`;
                     pages.innerHTML += `<option value="No Pages">No pages found</option>`;
-                }));
+                })
+        });
 
         const sendToContent = (message) => {
             const send = (tabs) => {
