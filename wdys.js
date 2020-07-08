@@ -23,7 +23,7 @@ const gotSettings = (data, sender, sendResponse) => {
             headers: {
                 'Content-Type': 'application/json; charset=UTF-8'
             },
-            body: JSON.stringify({ page_url: data.url, innerHTML: snapshot, pagename: data.snapshotName, description: data.snapshotDescription, base_lang: "ger" })
+            body: JSON.stringify({ page_url: data.url, innerHTML: snapshot, pagename: data.snapshotName, description: data.snapshotDescription })
         })
             .then(res => (res.json()))
             .then(res => console.log(res))
