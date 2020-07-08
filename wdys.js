@@ -47,16 +47,16 @@ const gotSettings = (data, sender, sendResponse) => {
                 .title {
                     justify-self: start;
                 }
-                .logo {
+                .logo-wdys {
                     text-transform: none; justify-self: center;
                 }
-                .logo span {
+                .logo-wdys span {
                     font-weight: 600;
                 }
             </style>
             <div id="base-id">
                 <div class='title'> Base language page </div>
-                <div class='logo'> { <span> wdys </span> } </div>
+                <div class='logo-wdys'> { <span> wdys </span> } </div>
             </div>` + body.innerHTML
 
             chrome.storage.local.set({ 'isWdysBasepage': true });
@@ -124,23 +124,28 @@ if (localStorage.getItem('tprequest') === 'true') {
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
         #translation-id {
             position:fixed; bottom:0; left: 0; z-index:99; margin:0; width:100%; height:80px; background:#01C0AD; font-family: 'Montserrat', sans-serif;
-            display:grid; grid-template-columns: repeat(3, 1fr); align-items:center; padding: 0 2em; text-transform:uppercase; color: #fff; font-weight: 16px;
+            display:grid; grid-template-columns: 2em 1fr 2em; text-transform:uppercase; color: #fff; font-weight: 16px;
+        }
+        .gridder {
+            display:grid; grid-column: 2 / 3; grid-template-columns: repeat(3, 1fr); align-items:center;
         }
         #save-button {
             height: 3em; border: 0; color: #fff; text-transform: uppercase; width: 250px; box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
             border-radius: 4px; cursor: pointer; outline: none; background: #3F3D56; justify-self: end;
         }
-        .logo {
+        .logo-wdys {
             text-transform: none; justify-self: center;
         }
-        .logo span {
+        .logo-wdys span {
             font-weight: 600;
         }
     </style>
     <div id="translation-id">
-        <div> Page to translate </div>
-        <div class='logo'> { <span> wdys </span> } </div>
-        <button id="save-button"> SAVE </button>
+        <div class='gridder'>
+            <div> Page to translate </div>
+            <div class='logo-wdys'> { <span> wdys </span> } </div>
+            <button id="save-button"> SAVE </button>
+        </div>
     </div>` + body.innerHTML
         const pseudo = document.querySelector('#pseudo-body');
         const saveButton = document.querySelector('#save-button')
