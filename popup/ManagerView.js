@@ -27,8 +27,6 @@ class ManagerView extends HTMLElement {
 
         const sendToContent = (message) => {
             const send = (tabs) => {
-                console.log("hey")
-                console.log({ projectValue: project.value })
                 message.url = tabs[0].url;
                 chrome.tabs.sendMessage(tabs[0].id, message)
             }

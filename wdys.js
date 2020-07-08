@@ -8,7 +8,6 @@ const gotSettings = (data, sender, sendResponse) => {
         const nodes = document.getElementsByTagName('*');
         let count = 0;
 
-
         for (let node of nodes) {
             node.dataset.id = count;
             count++;
@@ -25,17 +24,14 @@ const gotSettings = (data, sender, sendResponse) => {
             },
             body: JSON.stringify({ page_url: data.url, innerHTML: snapshot, pagename: data.snapshotName, description: data.snapshotDescription })
         })
-            .then(res => (res.json()))
             .then(res => console.log(res))
             .catch(console.log)
     }
 
     if (data.role === 'translator') {
-
         (async () => {
             const response = await fetch(`https://wdys.herokuapp.com/translators/extension/${data.userId}/${data.pageId}`)
             const result = await response.json();
-            console.log(result)
             body.innerHTML = result.basepage.innerHTML;
             body.innerHTML = `
             <style>
@@ -71,7 +67,6 @@ const gotSettings = (data, sender, sendResponse) => {
     }
 
     if (data.tprequest) {
-        console.log('here')
         localStorage.setItem('tprequest', true);
         localStorage.setItem('userId', data.userId);
         localStorage.setItem('pageId', data.pageId);
@@ -82,6 +77,9 @@ if (localStorage.getItem('tprequest') === 'true') {
     const userId = localStorage.getItem('userId');
     const pageId = localStorage.getItem('pageId');
     const saver = (pseudo) => {
+        const saveButton = document.querySelector('#save-button')
+        saveButton.innerHTML = '<div class="lds-dual-ring"></div>';
+        console.log(saveButton.innerHTML)
         fetch(`https://wdys.herokuapp.com/translators/extension/sendpage`, {
             method: 'PUT',
             headers: {
@@ -89,8 +87,11 @@ if (localStorage.getItem('tprequest') === 'true') {
             },
             body: JSON.stringify({ translator_id: userId, page_id: pageId, innerHTML: pseudo.innerHTML })
         })
-            .then(res => (res.json()))
-            .then(res => console.log(res))
+
+            .then(res => {
+                saveButton.innerHTML = 'SAVE';
+                console.log(res)
+            })
             .catch(err => console.log(err))
     };
 
@@ -128,7 +129,7 @@ if (localStorage.getItem('tprequest') === 'true') {
         }
         #save-button {
             height: 3em; border: 0; color: #fff; text-transform: uppercase; width: 250px; box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
-            border-radius: 4px; cursor: pointer; outline: none; background: #3F3D56; justify-self: end;
+            border-radius: 4px; cursor: pointer; outline: none; background: #3F3D56; justify-self: end; 
         }
         .logo {
             text-transform: none; justify-self: center;
@@ -136,6 +137,32 @@ if (localStorage.getItem('tprequest') === 'true') {
         .logo span {
             font-weight: 600;
         }
+        .lds-dual-ring {
+            display: inline-block;
+            margin-top: 4px;
+          }
+          .lds-dual-ring:after {
+            content: " ";
+            display: block;
+            width: 20px;
+            height: 20px;
+            margin: 0px;
+         
+            border-radius: 50%;
+            border: 2px solid #fff;
+            border-color: #fff transparent #fff transparent;
+            animation: lds-dual-ring 1.2s linear infinite;
+            
+          }
+          @keyframes lds-dual-ring {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+          
     </style>
     <div id="translation-id">
         <div> Page to translate </div>
@@ -156,7 +183,9 @@ if (localStorage.getItem('tprequest') === 'true') {
         }
         );
 
-        saveButton.addEventListener('click', () => saver(pseudo));
+        saveButton.addEventListener('click', () => {
+            saver(pseudo)
+        });
 
         localStorage.removeItem('tprequest');
         localStorage.removeItem('userId');

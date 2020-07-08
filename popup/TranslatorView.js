@@ -19,12 +19,10 @@ class TranslatorView extends HTMLElement {
                 .then(data => data.json())
                 .then(data => {
                     const projects = data.projects;
-                    console.log(projects)
                     openButton.disabled = !projects.length
 
                     if (projects.length) {
                         projects.map(project => {
-                            console.log(project._id === localStorage.getItem('project'))
                             if (project._id === localStorage.getItem('project')) selection.innerHTML += `<option value="${project._id}" selected>${project.projectname}</option>`
                             else selection.innerHTML += `<option value="${project._id}">${project.projectname}</option>`
                         });
@@ -89,12 +87,11 @@ class TranslatorView extends HTMLElement {
         };
 
         chrome.storage.onChanged.addListener((changes) => {
-            if (changes['isWdysBasepage'].newValue) loadButton.style.display = "block";
+            if (changes['isWdysBasepage'] && changes['isWdysBasepage'].newValue === true) loadButton.style.display = "block";
         });
 
         chrome.storage.local.get('isWdysBasepage', item => {
-            console.log(item)
-            if (item['isWdysBasepage']) loadButton.style.display = "block";
+            if (item['isWdysBasepage'] === true) loadButton.style.display = "block";
         })
 
         loadButton.onclick = (e) => {
@@ -107,16 +104,12 @@ class TranslatorView extends HTMLElement {
 
         pages.onchange = (e) => {
             if (e.target.value.length === 0) {
-                console.log('button disabled')
                 openButton.disabled = true
             } else openButton.disabled = false
         };
 
         if (localStorage.getItem('project') && localStorage.getItem('page')) openButton.disabled = false;
     }
-
-
-
 
     render() {
         this.innerHTML =
