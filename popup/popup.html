@@ -15,21 +15,37 @@
             padding:0;
             font-size: 16px;
             font-family: 'Montserrat', 'BlinkMacSystemFont', '-apple-system', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            height: 600px;
+            /* height: 100%; */
         }
         .contain-tm {
-            background:url('../icons/login-top.svg') no-repeat center top;
+            background: url('../icons/login-top.svg') no-repeat center top;
             background-size: contain;
             width: 420px;
-            height: 95%;
+            height: 580px;
             padding: 8px 5.625em;
+            
+        }
+        .login-view {
+            background-color: #01C0AD;
+            width: 380px;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            text-align: center;
+            align-content: center;
+        }
+        .login-view .title {
+            margin: 1em 0.5em 0;
+        }
+        .login-view p {
+            color: #ffffff;
         }
         .form {
             display: flex;
             flex-direction: column;
             flex-wrap: nowrap;  
         }
-
         .title {
             font-weight: 600;
             font-size: 2rem;
