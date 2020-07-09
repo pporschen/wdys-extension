@@ -14,7 +14,6 @@ const gotSettings = (data, sender, sendResponse) => {
         }
 
         const snapshot = body.innerHTML;
-        body.insertAdjacentHTML('afterbegin', '<div>HELLO</div>')
 
         fetch(`https://wdys.herokuapp.com/projects/${data.projectId}/snapshot`, {
             method: 'POST',
